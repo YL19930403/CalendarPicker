@@ -16,7 +16,11 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+//
+    BugtagsOptions *options = [[BugtagsOptions alloc] init];
+    options.trackingCrashes = YES; // 具体可设置的属性请查看 Bugtags.h
+    [Bugtags startWithAppKey:@"98454aa72a0023fae7aa11572db46455" invocationEvent:BTGInvocationEventBubble options:options];
+    
     return YES;
 }
 

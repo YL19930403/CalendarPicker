@@ -24,6 +24,7 @@
 - (IBAction)btnClick:(UIButton *)sender {
     YLCalendarPickerView * calendarPickerV = [YLCalendarPickerView showOnView:self.view ];
     calendarPickerV.todayDate = [NSDate date];
+    calendarPickerV.date = calendarPickerV.todayDate ;
     calendarPickerV.frame = CGRectMake(0, 100, self.view.frame.size.width, 352);
     calendarPickerV.calendarBlock = ^(NSInteger day, NSInteger month,NSInteger yesr){
         NSLog(@"%li-%li-%li",(long)yesr ,(long)month,(long)day);

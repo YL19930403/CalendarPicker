@@ -15,7 +15,6 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 
 @interface YLCalendarPickerView ()
 @property (weak, nonatomic) IBOutlet UIButton *PreButton;
-
 @property (weak, nonatomic) IBOutlet UIButton *NextButton;
 @property (weak, nonatomic) IBOutlet UILabel *MonthLabel;
 @property (weak, nonatomic) IBOutlet UICollectionView *CollectionV;
@@ -36,6 +35,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 - (void)awakeFromNib
 {
     [_CollectionV registerClass:[CalendarViewCell class] forCellWithReuseIdentifier:YLCalendarCellIdentifier];
+//    UINib * nib = [UINib nibWithNibName:@"YLCalendarPickerView" bundle:nil];
     _weekDayArray = @[@"日",@"一",@"二",@"三",@"四",@"五",@"六"];
 }
 
@@ -46,6 +46,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
     
     UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
     layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    layout.itemSize = CGSizeMake(itemWidth, itemHeight);
     layout.minimumLineSpacing = 0 ;
     layout.minimumInteritemSpacing = 0;
     [_CollectionV setCollectionViewLayout:layout animated:YES];
@@ -82,7 +83,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 
 - (void) hide
 {
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.5 animations:^(void){
         self.transform = CGAffineTransformTranslate(self.transform, 0,  - self.frame.size.height);
         self.mask.alpha = 0 ;
     } completion:^(BOOL finished) {
@@ -104,7 +105,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 - (void) show
 {
     self.transform = CGAffineTransformTranslate(self.transform, 0, -self.frame.size.height);
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.5 animations:^(void){
         self.transform = CGAffineTransformIdentity ;
     } completion:^(BOOL finished) {
         [self customInterface];
@@ -112,16 +113,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
     
 }
 
-- (void) setHidden:(BOOL)hidden
-{
-    [UIView animateWithDuration:0.5 animations:^{
-        self.transform = CGAffineTransformTranslate(self.transform, 0, - self.frame.size.height) ;
-        self.mask.alpha = 0 ;
-    } completion:^(BOOL finished) {
-        [self.mask removeFromSuperview];
-        [self removeFromSuperview];
-    }];
-}
+
 
 + (instancetype) showOnView:(UIView *)view
 {
@@ -156,7 +148,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 {
     NSCalendar * calendar = [NSCalendar currentCalendar];
     [calendar setFirstWeekday:1];  //1.Sun
-    NSDateComponents * component = [calendar components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear) fromDate:date];
+    NSDateComponents * component = [calendar components:( NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:date];
     [component setDay:1];
     NSDate * firstdayOfMonthDate = [calendar dateFromComponents:component];
     
@@ -216,7 +208,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CalendarViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:YLCalendarCellIdentifier forIndexPath:indexPath];
-    if (indexPath == 0 ) {
+    if (indexPath.section == 0 ) {
         [cell.dateLabel setText:_weekDayArray[indexPath.row]];
         [cell.dateLabel setTextColor:[UIColor colorWithHexString:@"#15cc9c"]];
     }else{
@@ -234,6 +226,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
             day = i - firstWeekday + 1 ;
             [cell.dateLabel setText:[NSString stringWithFormat:@"%li", (long)day]];
             [cell.dateLabel setTextColor:[UIColor colorWithHexString:@"#cbcbcb"]];
+
             
             //this month
             if ([_todayDate isEqualToDate:_date ]) {
@@ -279,7 +272,7 @@ NSString * const YLCalendarCellIdentifier = @"CalendarCell";
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDateComponents * components = [[NSCalendar currentCalendar] components:(NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear) fromDate:self.date];
+    NSDateComponents * components = [[NSCalendar currentCalendar] components:(NSCalendarUnitYear |  NSCalendarUnitMonth | NSCalendarUnitDay  ) fromDate:self.date];
     NSInteger firstWeekday = [self firstWeekdayInThisMonth:_date];
     
     NSInteger day = 0 ;
